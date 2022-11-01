@@ -35,14 +35,14 @@ const postURL = (uuid: string) => `http://localhost:3000?uuid=${uuid}`;
 const reducer = (state: State, action: Actions): State => {
   switch (action.type) {
     case 'getWorkouts':
-      return { ...state, tracker: action.data };
+      return { ...state, tracker: action.data || [] };
     case 'filterWorkouts':
       return {
         ...state,
-        filteredWorkouts: action.data,
+        filteredWorkouts: action.data || [],
       };
     case 'addWorkout':
-      return { ...state, tracker: action.data };
+      return { ...state, tracker: action.data || [] };
     default:
       return state;
   }
@@ -65,6 +65,7 @@ export const TrackerDataProvider = (props: children) => {
     actionType: Actions['type'],
     payload?: Workout
   ) => {
+    console.log(url);
     const options = payload
       ? {
           method: 'POST',
@@ -89,7 +90,6 @@ export const TrackerDataProvider = (props: children) => {
   //2/change date
 
   const api = useMemo(() => {
-    console.log('api');
     const onFilterWorkouts = async (
       uuid: string,
       month: string,

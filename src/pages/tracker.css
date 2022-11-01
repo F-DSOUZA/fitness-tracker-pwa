@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+}
+
+button {
+  height: 10%;
+  width: 5%;
+  margin: 3%;
+}
+
+button.button_hidden {
+  display: hidden;
+}

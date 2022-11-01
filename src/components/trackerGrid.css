@@ -1,9 +1,23 @@
-.container {
-  width: 700px;
-  height: 400px;
+.grid_container {
+  width: 900px;
+  height: 700px;
   background-color: white;
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   grid-template-rows: repeat(5, minmax(0, 1fr));
   gap: 5px;
+  text-align: initial;
+}
+
+.month_container {
+  display: flex;
+  flex-flow: column;
+  text-align: center;
+  color: cadetblue;
+  font-weight: bold;
+}
+
+.month_container > h1 {
+  font-weight: 800;
+  margin: 10px;
 }

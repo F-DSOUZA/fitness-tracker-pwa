@@ -1,17 +1,46 @@
-import React, { useEffect } from 'react';
-import { CalendarMonth } from '../components/calendarMonth';
-import { useApiContext, useTrackerContext } from '../components/context';
+import React, { useEffect, useState } from 'react';
+import { useApiContext } from '../components/context';
 import Section from '../components/section';
-import Table from '../components/table';
 import TrackerGrid from '../components/trackerGrid';
+import * as FaIcons from 'react-icons/fa';
+import './tracker.css';
 
 export default function Tracker() {
-  const { onGetWorkouts } = useApiContext();
-  onGetWorkouts('2');
-  console.log('i am rendering again!');
+  const { onFilterWorkouts } = useApiContext();
+
+  const [page, setPage] = useState<number>(0);
+  const filter = () => {
+    //page is indexed not per array in  url
+    const monthIndex = (page + 1).toString().padStart(2, '0');
+    onFilterWorkouts('1', monthIndex, '2022');
+  };
+
+  useEffect(() => {
+    filter();
+  }, []);
+
   return (
     <Section>
-      <TrackerGrid />
+      <div className="container">
+        <button
+          className="button_hidden"
+          onClick={() => {
+            setPage(page > 0 ? page - 1 : page);
+            filter();
+          }}
+        >
+          <FaIcons.FaBars />
+        </button>
+        <TrackerGrid page={page} />
+        <button
+          onClick={() => {
+            setPage(page < 11 ? page + 1 : page);
+            filter();
+          }}
+        >
+          <FaIcons.FaBars />
+        </button>
+      </div>
     </Section>
   );
 }
