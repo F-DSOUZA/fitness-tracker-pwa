@@ -1,0 +1,32 @@
+.card_container {
+  display: flex;
+  background-color: cadetblue;
+  flex-direction: column;
+  color: blanchedalmond;
+  transition: transform ease-in-out 200ms;
+}
+
+.card_container:hover {
+  transform: scale(2, 2.5);
+  box-shadow: 0 0 2px #000a;
+}
+.card_date {
+  height: 100%;
+  background-image: url('../assets/images/Runner.svg');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: top 0 right 0;
+}
+
+.card_details {
+  display: none;
+}
+
+.card_container:hover .card_details {
+  display: block;
+  background: #181818;
+  color: #fff;
+  width: 100%;
+  box-shadow: 0 0 2px #000a;
+  text-align: center;
+}
