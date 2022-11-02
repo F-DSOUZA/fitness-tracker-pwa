@@ -9,7 +9,3 @@ button {
   width: 5%;
   margin: 3%;
 }
-
-button.button_hidden {
-  display: hidden;
-}

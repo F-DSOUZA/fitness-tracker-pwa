@@ -1,8 +1,6 @@
 import React from 'react';
-import { Workout } from './context';
 import './card.css';
 import { MonthWithDay } from '../components/calendarMonth';
-import Runner from '../assets/images/Runner.svg';
 
 type Props = {
   data: MonthWithDay | { cal_date: number };
@@ -14,8 +12,7 @@ function Card({ data }: Props) {
       {'workout_type' in data ? (
         <>
           <p>{data.cal_date}</p>
-          <img src={Runner} />
-
+          <img src={data.img_url} />
           <h3 className="card_details">{data.workout_type}</h3>
         </>
       ) : (

@@ -12,5 +12,4 @@ function App() {
   );
 }
 
-//why does navigation have to be inside the router for it to work?
 export default App;
