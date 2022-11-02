@@ -22,24 +22,23 @@ export default function Tracker() {
   return (
     <Section>
       <div className="container">
-        <button
-          className="button_hidden"
-          onClick={() => {
-            setPage(page > 0 ? page - 1 : page);
-            filter();
-          }}
-        >
-          <FaIcons.FaBars />
-        </button>
+        <div className="chevron">
+          <FaIcons.FaChevronCircleLeft
+            onClick={() => {
+              setPage(page > 0 ? page - 1 : page);
+              filter();
+            }}
+          />
+        </div>
         <TrackerGrid page={page} />
-        <button
-          onClick={() => {
-            setPage(page < 11 ? page + 1 : page);
-            filter();
-          }}
-        >
-          <FaIcons.FaBars />
-        </button>
+        <div className="chevron">
+          <FaIcons.FaChevronCircleRight
+            onClick={() => {
+              setPage(page < 11 ? page + 1 : page);
+              filter();
+            }}
+          />
+        </div>
       </div>
     </Section>
   );

@@ -4,8 +4,8 @@
   align-items: center;
 }
 
-button {
-  height: 10%;
-  width: 5%;
-  margin: 3%;
+.chevron {
+  margin: 0 1rem;
+  font-size: 2rem;
+  background: none;
 }
