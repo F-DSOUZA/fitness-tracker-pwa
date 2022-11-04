@@ -1,0 +1,12 @@
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+input[type='checkbox'][id='other'] + label + input[type='text'] {
+  visibility: hidden;
+}
+
+input[type='checkbox'][id='other']:checked + label + input[type='text'] {
+  visibility: visible;
+}

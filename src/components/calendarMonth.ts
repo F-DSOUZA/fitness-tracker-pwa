@@ -63,7 +63,6 @@ export class CalendarMonth {
       if (key.includes(workout_type.toLowerCase())) {
         return value;
       }
-      //Rui - if i return null here instead why could fn be undefined?
     }
     return CalendarMonth.ImageMap['other'];
   }
@@ -95,7 +94,3 @@ export class CalendarMonth {
     return currentMonth;
   }
 }
-
-//Rui - when are setters used
-
-//Rui - can i combine svgs into same ike
