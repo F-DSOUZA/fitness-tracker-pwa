@@ -58,7 +58,7 @@ export class CalendarMonth {
     this.month = CalendarMonth.MonthMap[page];
   }
 
-  getImgUrl(workout_type: string): string {
+  static getImgUrl(workout_type: string): string {
     for (const [key, value] of Object.entries(CalendarMonth.ImageMap)) {
       if (key.includes(workout_type.toLowerCase())) {
         return value;
@@ -72,7 +72,7 @@ export class CalendarMonth {
       (item: Workout | null) => {
         if (item !== null) {
           const index: string = item.workout_date.split('/', 1)[0];
-          const img = this.getImgUrl(item.workout_type);
+          const img = CalendarMonth.getImgUrl(item.workout_type);
           return { cal_date: Number(index), img_url: img, ...item };
         }
         return null;

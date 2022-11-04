@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useReducer } from 'react';
+import React, { useContext, useMemo, useReducer } from 'react';
 
 export type Workout = {
   workout_date: string;
@@ -23,7 +23,7 @@ type Actions = { type: ActionType; data: Array<Workout | null> };
 
 type API = {
   onFilterWorkouts: (uuid: string, month: string, year: string) => void;
-  onCreateWorkouts: (uuid: string) => void;
+  onCreateWorkouts: (uuid: string, data: Workout) => void;
   onGetWorkouts: (uuid: string) => void;
 };
 
@@ -37,6 +37,7 @@ const reducer = (state: State, action: Actions): State => {
     case 'getWorkouts':
       return { ...state, tracker: action.data || [] };
     case 'filterWorkouts':
+      console.log('state change dispatch');
       return {
         ...state,
         filteredWorkouts: action.data || [],
@@ -56,10 +57,6 @@ const ApiContext = React.createContext<API>({} as API);
 
 export const TrackerDataProvider = (props: children) => {
   const [state, dispatch] = useReducer(reducer, {} as State);
-  useEffect(() => {
-    console.log('state provider state change', state);
-  }, [state]);
-
   const getData = async (
     url: string,
     actionType: Actions['type'],
@@ -97,11 +94,10 @@ export const TrackerDataProvider = (props: children) => {
     ) => {
       await getData(filterURL(uuid, month, year), 'filterWorkouts');
     };
-    const onCreateWorkouts = async (uuid: string) => {
-      await getData(postURL(uuid), 'addWorkout');
+    const onCreateWorkouts = async (uuid: string, data: Workout) => {
+      await getData(postURL(uuid), 'addWorkout', data);
     };
     const onGetWorkouts = async (uuid: string) => {
-      console.log('api - onGetWorkouts');
       await getData(getURL(uuid), 'getWorkouts');
     };
     return {
@@ -112,13 +108,13 @@ export const TrackerDataProvider = (props: children) => {
   }, []);
 
   return (
-    <FilterContext.Provider value={state.filteredWorkouts}>
-      <ApiContext.Provider value={api}>
+    <ApiContext.Provider value={api}>
+      <FilterContext.Provider value={state.filteredWorkouts}>
         <TrackerContext.Provider value={state.tracker}>
           {props.children}
         </TrackerContext.Provider>
-      </ApiContext.Provider>
-    </FilterContext.Provider>
+      </FilterContext.Provider>
+    </ApiContext.Provider>
   );
 };
 

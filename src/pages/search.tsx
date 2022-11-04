@@ -1,58 +1,45 @@
-import React, { useRef, RefObject } from 'react';
+import React from 'react';
 import { useEffect, useState } from 'react';
-import { useApiContext } from '../components/context';
+import { CalendarMonth, MonthWithDay } from '../components/calendarMonth';
+import { useFilterContext, Workout } from '../components/context';
+import Searchbox from '../components/searchbox';
 import Section from '../components/section';
 
 export default function Search() {
-  const inputRef: RefObject<HTMLInputElement> = useRef(null);
-  const [inputValue, setInputValue] = useState('');
-  const { onFilterWorkouts } = useApiContext();
+  const filteredWorkouts = useFilterContext();
+  const [renderedList, setRenderedList] = useState<Array<MonthWithDay | null>>(
+    []
+  );
 
-  //useEffect(() => {
-  //  //const date = inputValue.split('/');
-  //  //if (date.length === 3) {
-  //  //  console.log(date);
-  //    // onFilterWorkouts(inputValue[0], inputValue[1], inputValue[2]);
-  //  }
-  //}, [inputValue]);
-
-  const debounce = () => {
-    console.log('inside debounce');
-    return function executedFunction() {
-      const later = function () {
-        console.log('inside later fn');
-      };
-
-      setTimeout(later, 1000);
-      console.log('inside ex fn');
-    };
+  //Rui - smarter way of re writing this so that it automatically calls on rerender without having to pass context into useEffect
+  const createWorkoutList = () => {
+    console.log(filteredWorkouts);
+    const returnedWorkouts = filteredWorkouts.map((item: Workout | null) => {
+      if (item !== null) {
+        const index: string = item.workout_date.split('/', 1)[0];
+        const img = CalendarMonth.getImgUrl(item.workout_type);
+        return { cal_date: Number(index), img_url: img, ...item };
+      }
+      return null;
+    });
+    returnedWorkouts ? setRenderedList(returnedWorkouts) : null;
   };
 
-  const handleChange = () => {
-    debounce();
-    //inputRef.current?.value && setInputValue(inputRef.current?.value);
-    //every change, change the state
-    //debounce the call to the state
-    //when the state changes use useEffect dependent on state to call the context api
-    //call a context function when the the reff changes
-    //how does handle change work?
-  };
+  useEffect(() => {
+    console.log('rerender in useEffect', filteredWorkouts);
+    if (filteredWorkouts) {
+      createWorkoutList();
+    }
+  }, [filteredWorkouts]);
 
   return (
     <Section>
-      <input
-        onChange={handleChange}
-        type="text"
-        ref={inputRef}
-        placeholder="MM/DD/YYYY"
-      />
+      <Searchbox />
+      {renderedList.map((item: MonthWithDay | null) => {
+        return item && <p>{item.workout_type}</p>;
+      })}
     </Section>
   );
 }
 
-//when the user starts typing call debounce
-//debounce returns a  function excecuted function
-//excecuted returns a function later that is called within the scope of excecuted function after a timeout
-//we want debounce to be called when they start typing as we need to initialize the timer  and start the timeout function
-
-//check rendering and possibly split out input component
+//added filtered workouts to useEffect dependencies because useEffect is not triggered in rerender

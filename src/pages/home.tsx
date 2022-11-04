@@ -7,20 +7,19 @@ export default function Home() {
   const otherCheckboxRef = useRef(null);
   const otherInputRef = useRef(null);
 
-  //const { addWorkout } = useApiContext();
-  const handleOtherChecked = () => {
-    //console.log(otherInputRef.current?.value.classNames);
-  };
+  const { onCreateWorkouts } = useApiContext();
 
-  const handleSubmit = {
-    //addWorkout({workout_date:})
+  const handleSubmit = () => {
+    //Monday- https://stackoverflow.com/questions/71384018/typing-object-fromentriesnew-formdataform and fix this
+    const payload = { workout_type: '', workout_date: '' };
+    onCreateWorkouts('1', payload);
   };
 
   return (
     <Section>
       <fieldset>
         <legend>Record your workout</legend>
-        <form className="form">
+        <form className="form" onSubmit={handleSubmit}>
           <div>
             <legend>Date:</legend>
             <input
@@ -117,7 +116,6 @@ export default function Home() {
           </div>
           <div>
             <input
-              onChange={handleOtherChecked}
               ref={otherCheckboxRef}
               name="workoutType"
               value="other"
