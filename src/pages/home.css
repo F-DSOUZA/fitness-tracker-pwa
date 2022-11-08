@@ -1,12 +1,36 @@
+fieldset {
+  padding: 1rem 2rem;
+  color: cadetblue;
+}
+
+legend {
+  font-weight: bolder;
+}
+
+legend:last-of-type {
+  padding-top: 1rem;
+}
+
 .form {
   display: flex;
   flex-direction: column;
 }
 
-input[type='checkbox'][id='other'] + label + input[type='text'] {
+input[type='radio'] {
+  accent-color: cadetblue;
+  padding: 0.25 rem;
+}
+
+input[type='radio'][id='other'] + label + input[type='text'] {
   visibility: hidden;
 }
 
-input[type='checkbox'][id='other']:checked + label + input[type='text'] {
+input[type='radio'][id='other']:checked + label + input[type='text'] {
   visibility: visible;
+  margin-left: 0.5rem;
+}
+
+input[type='submit'] {
+  color: cadetblue;
+  margin-top: 1rem;
 }

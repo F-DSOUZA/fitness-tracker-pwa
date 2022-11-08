@@ -23,7 +23,7 @@ type Actions = { type: ActionType; data: Array<Workout | null> };
 
 type API = {
   onFilterWorkouts: (uuid: string, month: string, year: string) => void;
-  onCreateWorkouts: (uuid: string, data: Workout) => void;
+  onCreateWorkouts: (uuid: string, data: FormData) => void;
   onGetWorkouts: (uuid: string) => void;
 };
 
@@ -37,7 +37,6 @@ const reducer = (state: State, action: Actions): State => {
     case 'getWorkouts':
       return { ...state, tracker: action.data || [] };
     case 'filterWorkouts':
-      console.log('state change dispatch');
       return {
         ...state,
         filteredWorkouts: action.data || [],
@@ -60,7 +59,7 @@ export const TrackerDataProvider = (props: children) => {
   const getData = async (
     url: string,
     actionType: Actions['type'],
-    payload?: Workout
+    payload?: FormData
   ) => {
     console.log(url);
     const options = payload
@@ -94,7 +93,7 @@ export const TrackerDataProvider = (props: children) => {
     ) => {
       await getData(filterURL(uuid, month, year), 'filterWorkouts');
     };
-    const onCreateWorkouts = async (uuid: string, data: Workout) => {
+    const onCreateWorkouts = async (uuid: string, data: FormData) => {
       await getData(postURL(uuid), 'addWorkout', data);
     };
     const onGetWorkouts = async (uuid: string) => {
