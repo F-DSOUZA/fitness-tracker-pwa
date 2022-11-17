@@ -34,6 +34,7 @@ function trackerGrid(props: Props) {
 
   useEffect(() => {
     if (filteredWorkouts) {
+      console.log('FILTERED WORKOUTS', filteredWorkouts);
       getMonth();
     }
   }, [filteredWorkouts, props.page]);

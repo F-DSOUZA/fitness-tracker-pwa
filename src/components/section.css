@@ -1,5 +1,7 @@
 .section {
   margin: 3% auto;
+  padding: 0 20%;
   display: flex;
   justify-content: center;
+  flex-direction: column;
 }

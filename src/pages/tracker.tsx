@@ -9,15 +9,15 @@ export default function Tracker() {
   const { onFilterWorkouts } = useApiContext();
 
   const [page, setPage] = useState<number>(0);
-  const filter = () => {
+  const filterWorkouts = () => {
     //page is indexed not per array in  url
     const monthIndex = (page + 1).toString().padStart(2, '0');
     onFilterWorkouts('1', monthIndex, '2022');
   };
 
   useEffect(() => {
-    filter();
-  }, []);
+    filterWorkouts();
+  }, [page]);
 
   return (
     <Section>
@@ -26,7 +26,6 @@ export default function Tracker() {
           <FaIcons.FaChevronCircleLeft
             onClick={() => {
               setPage(page > 0 ? page - 1 : page);
-              filter();
             }}
           />
         </div>
@@ -35,7 +34,6 @@ export default function Tracker() {
           <FaIcons.FaChevronCircleRight
             onClick={() => {
               setPage(page < 11 ? page + 1 : page);
-              filter();
             }}
           />
         </div>

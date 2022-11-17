@@ -48,7 +48,7 @@ export class CalendarMonth {
     yoga: Yoga,
   };
 
-  //readonly meaning it can only be set in the constructor
+  //read only meaning it can only be set in the constructor
   readonly data: (Workout | null)[];
   month: MonthInfo;
   test: Array<MonthWithDay | null> = [];

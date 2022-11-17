@@ -18,7 +18,7 @@ legend:last-of-type {
 
 input[type='radio'] {
   accent-color: cadetblue;
-  padding: 0.25 rem;
+  margin-right: 0.25rem;
 }
 
 input[type='radio'][id='other'] + label + input[type='text'] {

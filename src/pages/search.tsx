@@ -1,19 +1,23 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { CalendarMonth, MonthWithDay } from '../components/calendarMonth';
-import { useFilterContext, Workout } from '../components/context';
+import {
+  useFilterContext,
+  useTrackerContext,
+  Workout,
+} from '../components/context';
 import Searchbox from '../components/searchbox';
 import Section from '../components/section';
+import './search.css';
 
 export default function Search() {
   const filteredWorkouts = useFilterContext();
+  const tracker = useTrackerContext();
   const [renderedList, setRenderedList] = useState<Array<MonthWithDay | null>>(
     []
   );
-
   //Rui - smarter way of re writing this so that it automatically calls on rerender without having to pass context into useEffect
   const createWorkoutList = () => {
-    console.log(filteredWorkouts);
     const returnedWorkouts = filteredWorkouts.map((item: Workout | null) => {
       if (item !== null) {
         const index: string = item.workout_date.split('/', 1)[0];
@@ -26,7 +30,6 @@ export default function Search() {
   };
 
   useEffect(() => {
-    console.log('rerender in useEffect', filteredWorkouts);
     if (filteredWorkouts) {
       createWorkoutList();
     }
@@ -35,9 +38,19 @@ export default function Search() {
   return (
     <Section>
       <Searchbox />
-      {renderedList.map((item: MonthWithDay | null) => {
-        return item && <p>{item.workout_type}</p>;
-      })}
+      <div className="searchContainer">
+        {renderedList.map((item: MonthWithDay | null) => {
+          return (
+            item && (
+              <div className="filterCard">
+                <img src={item.img_url} />
+                <p>{item.workout_date}</p>
+                <p>{item.workout_type}</p>
+              </div>
+            )
+          );
+        })}
+      </div>
     </Section>
   );
 }

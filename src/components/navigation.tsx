@@ -10,6 +10,9 @@ import { SidebarData } from './sidebarData';
 export const Navigation = () => {
   const [sidebar, setSidebar] = useState(false);
   const showSidebar = () => setSidebar(!sidebar);
+  const handleClick = () => {
+    void fetch('/auth/signout');
+  };
 
   return (
     <>

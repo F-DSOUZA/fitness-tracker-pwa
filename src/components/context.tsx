@@ -1,3 +1,4 @@
+import { exec } from 'child_process';
 import React, { useContext, useMemo, useReducer } from 'react';
 
 export type Workout = {
@@ -62,20 +63,46 @@ export const TrackerDataProvider = (props: children) => {
     payload?: FormData
   ) => {
     console.log(url);
-    const options = payload
-      ? {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        }
-      : undefined;
+    const options =
+      actionType === 'addWorkout' && payload
+        ? {
+            headers: { mode: 'cors', 'Content-Type': 'application/json' },
+            method: 'POST',
+            body: JSON.stringify(Object.fromEntries(payload)),
+          }
+        : undefined;
+    console.log(payload?.get('workout_type'));
 
     const fetchResult = await fetch(url, options);
     const result: FTResponse = (await fetchResult.json()) as FTResponse;
 
     dispatch({ type: actionType, data: result.data });
+  };
+
+  // ---
+
+  const executeRequest = async (
+    url: string,
+    actionType: Actions['type'],
+    payload?: FormData
+  ) => {
+    const options = payload
+      ? getRequestOptions(actionType, payload)
+      : undefined;
+    const fetchResult = await fetch(url, options);
+    const result: FTResponse = (await fetchResult.json()) as FTResponse;
+
+    dispatch({ type: actionType, data: result.data });
+  };
+
+  const getRequestOptions = (actionType: string, payload: FormData) => {
+    if (actionType === 'addWorkout' && payload) {
+      return {
+        headers: { mode: 'cors', 'Content-Type': 'application/json' },
+        method: 'POST',
+        body: JSON.stringify(Object.fromEntries(payload)),
+      };
+    }
   };
 
   //everytime state changes all of the state handler fns would be recreated as well, meaning any components using the handlers and the state would be re-rendered
@@ -91,13 +118,13 @@ export const TrackerDataProvider = (props: children) => {
       month: string,
       year: string
     ) => {
-      await getData(filterURL(uuid, month, year), 'filterWorkouts');
+      await executeRequest(filterURL(uuid, month, year), 'filterWorkouts');
     };
     const onCreateWorkouts = async (uuid: string, data: FormData) => {
-      await getData(postURL(uuid), 'addWorkout', data);
+      await executeRequest(postURL(uuid), 'addWorkout', data);
     };
     const onGetWorkouts = async (uuid: string) => {
-      await getData(getURL(uuid), 'getWorkouts');
+      await executeRequest(getURL(uuid), 'getWorkouts');
     };
     return {
       onCreateWorkouts,

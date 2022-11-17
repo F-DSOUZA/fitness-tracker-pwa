@@ -1,4 +1,3 @@
-import { off } from 'process';
 import React, { MutableRefObject, useRef } from 'react';
 import { useApiContext } from '../components/context';
 import Section from '../components/section';
@@ -6,7 +5,7 @@ import './home.css';
 
 export default function Home() {
   const formRef: MutableRefObject<HTMLFormElement | null> = useRef(null);
-  const otherInputRef = useRef(null);
+  //const otherInputRef = useRef(null);
 
   const { onCreateWorkouts } = useApiContext();
 
@@ -14,23 +13,14 @@ export default function Home() {
     console.log('handlesubmit');
     if (formRef.current) {
       const formData = new FormData(formRef?.current);
-      for (const pair of formData.entries()) {
-        if (pair[1] === 'other') {
-          formData.delete(pair[0]);
-        }
-        if (pair[0] === 'other_type') {
-          formData.append('workout_type', pair[1]);
-          formData.delete(pair[0]);
-        }
-        if (!pair[1]) {
-          console.log(pair[0]);
-          formData.delete(pair[0]);
-        }
+      if (formData.get('workout_type') === 'other') {
+        const other_type = formData.get('other_type') as string;
+        formData.set('workout_type', other_type);
       }
-      for (const pair of formData.entries()) {
-        console.log(pair);
-      }
+      formData.delete('other_type');
+
       //Rui - how do i type form data FormDate<Workout>
+      // how to style min content
       onCreateWorkouts('1', formData);
     }
 
