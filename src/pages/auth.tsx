@@ -12,8 +12,8 @@ export default function Auth({
   const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+
   const sendUserDetails = async () => {
-    console.log(JSON.stringify({ password, email }));
     const options = {
       headers: {
         mode: 'cors',
@@ -27,23 +27,29 @@ export default function Auth({
       'http://localhost:3000/auth/login',
       options
     );
+    console.log('success', response);
     if (response.status === 200) {
       console.log('success 200', response);
+
+      //RUUUIIIII
       const responseObj = (await response.json()) as sessionResponse; //note this returns a js obj and not json
-      return responseObj;
+      if (responseObj && 'data' in responseObj) {
+        return responseObj.data;
+      }
     }
     console.log('fetch fail', response);
     return null;
   };
-  //ask Rui about the promise problem when i remove void
-  //why cant i see network request
+
+  //Rui - why cant i see network request
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       setLoading(true);
       await sendUserDetails();
-      const response = await sendUserDetails();
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const response = (await sendUserDetails()) as sessionResponse;
+      console.log('handlelogin response received ', response);
+
       if (
         response &&
         response?.user &&
@@ -51,6 +57,7 @@ export default function Auth({
         'role' in response.user &&
         response.user.role === 'authenticated'
       ) {
+        console.log('RES2 ', response);
         setSessionToken(response);
         // note if i just savw with local state The token is currently stored using a local state, which means that it is stored in JavaScript memory.
         //If you open a new window, tab, or even just refresh the page, you will lose the token
@@ -66,6 +73,7 @@ export default function Auth({
   return loading ? (
     <div>lOADING....</div>
   ) : (
+    //Rui - error when removing ts below
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     <form onSubmit={handleLogin}>
       <label htmlFor="email">Email</label>
