@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { useApiContext } from '../components/context';
+import { useApiContext } from '../utils/Context/context';
 import Section from '../components/section';
 import TrackerGrid from '../components/trackerGrid';
 import * as FaIcons from 'react-icons/fa';
 import './tracker.css';
+import { useAuthContext } from '../utils/AuthContext/authContext';
 
 export default function Tracker() {
   const { onFilterWorkouts } = useApiContext();
+  const { token } = useAuthContext();
 
   const [page, setPage] = useState<number>(0);
   const filterWorkouts = () => {
     //page is indexed not per array in  url
     const monthIndex = (page + 1).toString().padStart(2, '0');
-    onFilterWorkouts('1', monthIndex, '2022');
+    if (token) {
+      onFilterWorkouts('1', monthIndex, '2022', token);
+    } else {
+      console.log('user not authenticated, cannot return workouts');
+    }
   };
 
   useEffect(() => {

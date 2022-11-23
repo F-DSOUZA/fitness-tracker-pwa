@@ -1,12 +1,14 @@
 import React, { MutableRefObject, useRef } from 'react';
-import { useApiContext } from '../components/context';
+import { useApiContext } from '../utils/Context/context';
 import Section from '../components/section';
 import './home.css';
+import './search.css';
+import { useAuthContext } from '../utils/AuthContext/authContext';
 
 export default function Home() {
   const formRef: MutableRefObject<HTMLFormElement | null> = useRef(null);
   //const otherInputRef = useRef(null);
-
+  const { token } = useAuthContext();
   const { onCreateWorkouts } = useApiContext();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -19,9 +21,11 @@ export default function Home() {
       }
       formData.delete('other_type');
 
-      //Rui - how do i type form data FormDate<Workout>
-      // how to style min content
-      onCreateWorkouts('1', formData);
+      if (token) {
+        return onCreateWorkouts('1', formData, token);
+      } else {
+        console.log('user authenticated, cannot create workout');
+      }
     }
 
     e.preventDefault();

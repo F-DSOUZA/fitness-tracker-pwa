@@ -5,18 +5,17 @@ import {
   useFilterContext,
   useTrackerContext,
   Workout,
-} from '../components/context';
+} from '../utils/Context/context';
 import Searchbox from '../components/searchbox';
 import Section from '../components/section';
 import './search.css';
 
 export default function Search() {
   const filteredWorkouts = useFilterContext();
-  const tracker = useTrackerContext();
   const [renderedList, setRenderedList] = useState<Array<MonthWithDay | null>>(
     []
   );
-  //Rui - smarter way of re writing this so that it automatically calls on rerender without having to pass context into useEffect
+
   const createWorkoutList = () => {
     const returnedWorkouts = filteredWorkouts.map((item: Workout | null) => {
       if (item !== null) {

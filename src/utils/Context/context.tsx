@@ -1,4 +1,3 @@
-import { exec } from 'child_process';
 import React, { useContext, useMemo, useReducer } from 'react';
 
 export type Workout = {
@@ -23,15 +22,27 @@ type ActionType = 'getWorkouts' | 'filterWorkouts' | 'addWorkout';
 type Actions = { type: ActionType; data: Array<Workout | null> };
 
 type API = {
-  onFilterWorkouts: (uuid: string, month: string, year: string) => void;
-  onCreateWorkouts: (uuid: string, data: FormData) => void;
-  onGetWorkouts: (uuid: string) => void;
+  onFilterWorkouts: (
+    uuid: string,
+    month: string,
+    year: string,
+    token: string
+  ) => void;
+  onCreateWorkouts: (uuid: string, data: FormData, token: string) => void;
+  onGetWorkouts: (uuid: string, token: string) => void;
 };
 
-const filterURL = (uuid: string, month: string, year: string) =>
-  `http://localhost:3000/filter?month=${month}&year=${year}&uuid=${uuid}`;
-const getURL = (uuid: string) => `http://localhost:3000?uuid=${uuid}`;
-const postURL = (uuid: string) => `http://localhost:3000?uuid=${uuid}`;
+const getFilterURL = (
+  uuid: string,
+  month: string,
+  year: string,
+  token: string
+) =>
+  `http://localhost:3000/filter?month=${month}&year=${year}&uuid=${uuid}&token=${token}`;
+const getURL = (uuid: string, token: string) =>
+  `http://localhost:3000?uuid=${uuid}&token=${token}`;
+const getPostURL = (uuid: string, token: string) =>
+  `http://localhost:3000?uuid=${uuid}&token=${token}`;
 
 const reducer = (state: State, action: Actions): State => {
   switch (action.type) {
@@ -57,29 +68,28 @@ const ApiContext = React.createContext<API>({} as API);
 
 export const TrackerDataProvider = (props: children) => {
   const [state, dispatch] = useReducer(reducer, {} as State);
-  const getData = async (
-    url: string,
-    actionType: Actions['type'],
-    payload?: FormData
-  ) => {
-    console.log(url);
-    const options =
-      actionType === 'addWorkout' && payload
-        ? {
-            headers: { mode: 'cors', 'Content-Type': 'application/json' },
-            method: 'POST',
-            body: JSON.stringify(Object.fromEntries(payload)),
-          }
-        : undefined;
-    console.log(payload?.get('workout_type'));
 
-    const fetchResult = await fetch(url, options);
-    const result: FTResponse = (await fetchResult.json()) as FTResponse;
-
-    dispatch({ type: actionType, data: result.data });
-  };
-
-  // ---
+  //  const getData = async (
+  //    url: string,
+  //    actionType: Actions['type'],
+  //    payload?: FormData
+  //  ) => {
+  //    console.log(url);
+  //    const options =
+  //      actionType === 'addWorkout' && payload
+  //        ? {
+  //            headers: { mode: 'cors', 'Content-Type': 'application/json' },
+  //            method: 'POST',
+  //            body: JSON.stringify(Object.fromEntries(payload)),
+  //          }
+  //        : undefined;
+  //    console.log(payload?.get('workout_type'));
+  //
+  //    const fetchResult = await fetch(url, options);
+  //    const result: FTResponse = (await fetchResult.json()) as FTResponse;
+  //
+  //    dispatch({ type: actionType, data: result.data });
+  //  };
 
   const executeRequest = async (
     url: string,
@@ -116,15 +126,23 @@ export const TrackerDataProvider = (props: children) => {
     const onFilterWorkouts = async (
       uuid: string,
       month: string,
-      year: string
+      year: string,
+      token: string
     ) => {
-      await executeRequest(filterURL(uuid, month, year), 'filterWorkouts');
+      await executeRequest(
+        getFilterURL(uuid, month, year, token),
+        'filterWorkouts'
+      );
     };
-    const onCreateWorkouts = async (uuid: string, data: FormData) => {
-      await executeRequest(postURL(uuid), 'addWorkout', data);
+    const onCreateWorkouts = async (
+      uuid: string,
+      data: FormData,
+      token: string
+    ) => {
+      await executeRequest(getPostURL(uuid, token), 'addWorkout', data);
     };
-    const onGetWorkouts = async (uuid: string) => {
-      await executeRequest(getURL(uuid), 'getWorkouts');
+    const onGetWorkouts = async (uuid: string, token: string) => {
+      await executeRequest(getURL(uuid, token), 'getWorkouts');
     };
     return {
       onCreateWorkouts,

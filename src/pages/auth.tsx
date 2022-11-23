@@ -1,14 +1,30 @@
-import { userInfo } from 'os';
+import { AssertionError } from 'assert';
 import React, { useState } from 'react';
-import { json } from 'react-router-dom';
+import { useAuthContext } from '../utils/AuthContext/authContext';
+
+type User = {
+  accessToken: string;
+  role: string;
+};
+
+const assertResponseType = (param: unknown): asserts param is User => {
+  if (!param || typeof param != 'object') {
+    throw new AssertionError({ message: 'no user found' });
+  }
+  if (!param.hasOwnProperty('role')) {
+    throw new AssertionError({ message: 'user has no role' });
+  }
+  if (!param.hasOwnProperty('accessToken')) {
+    throw new AssertionError({ message: 'user has no userToken' });
+  }
+};
+
 export type sessionResponse = {
   [key: string]: string | { [key: string]: string };
 } | null;
-export default function Auth({
-  setSessionToken,
-}: {
-  setSessionToken: (x: sessionResponse) => void;
-}) {
+
+export default function Auth() {
+  const { setToken, token } = useAuthContext();
   const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -27,21 +43,25 @@ export default function Auth({
       'http://localhost:3000/auth/login',
       options
     );
-    console.log('success', response);
+    // !!!!!!!!  need to set this straight to auth context so we can keep a valid token and then on every route reuse token for fetch request
     if (response.status === 200) {
       console.log('success 200', response);
 
-      //RUUUIIIII
       const responseObj = (await response.json()) as sessionResponse; //note this returns a js obj and not json
-      if (responseObj && 'data' in responseObj) {
-        return responseObj.data;
+      if (
+        responseObj &&
+        'data' in responseObj &&
+        typeof responseObj.data != 'string' &&
+        'user' in responseObj.data
+      ) {
+        return (
+          responseObj.data.user && assertResponseType(responseObj.data.user)
+        );
       }
     }
-    console.log('fetch fail', response);
     return null;
   };
 
-  //Rui - why cant i see network request
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -52,16 +72,17 @@ export default function Auth({
 
       if (
         response &&
-        response?.user &&
-        typeof response?.user != 'string' &&
-        'role' in response.user &&
-        response.user.role === 'authenticated'
+        response.role === 'authenticated' &&
+        typeof response.accessToken == 'string'
       ) {
-        console.log('RES2 ', response);
-        setSessionToken(response);
+        return setToken(response.accessToken);
         // note if i just savw with local state The token is currently stored using a local state, which means that it is stored in JavaScript memory.
         //If you open a new window, tab, or even just refresh the page, you will lose the token
       }
+      console.log(
+        'response not valid, user not authenticated ot accestoken not valid ',
+        response
+      );
       return;
     } catch (error) {
       console.log(error);
@@ -71,7 +92,7 @@ export default function Auth({
   };
 
   return loading ? (
-    <div>lOADING....</div>
+    <div>Loading....</div>
   ) : (
     //Rui - error when removing ts below
     // eslint-disable-next-line @typescript-eslint/no-misused-promises

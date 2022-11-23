@@ -1,28 +1,25 @@
 import React from 'react';
 import './App.css';
 import Index from './components/index';
-import { TrackerDataProvider } from './components/context';
+import { TrackerDataProvider } from './utils/Context/context';
+import { AuthProvider } from './utils/AuthContext/authContext';
 import Auth from './pages/auth';
-import useToken from './utils/useToken';
+import { useAuthContext } from './utils/AuthContext/authContext';
 
 function App() {
-  const { token, setToken } = useToken();
-
-  //useEffect(() => {
-  //  void fetch('/auth/session')
-  //    .then((data: Response) => data.json())
-  //    .then((data) => setToken(data));
-  //}, []);
+  const { token } = useAuthContext();
 
   // configured routes to display the pages and added a check to display the Login component on every route if the user is not yet logged into the application.
   if (!token) {
-    return <Auth setSessionToken={setToken} />;
+    return <Auth />;
   }
 
   return (
-    <TrackerDataProvider>
-      <Index />
-    </TrackerDataProvider>
+    <AuthProvider>
+      <TrackerDataProvider>
+        <Index />
+      </TrackerDataProvider>
+    </AuthProvider>
   );
 }
 

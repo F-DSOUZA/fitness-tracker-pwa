@@ -1,4 +1,4 @@
-import { Workout } from './context';
+import { Workout } from '../utils/Context/context';
 import Runner from '../assets/images/Runner.svg';
 import Bootcamp from '../assets/images/Bootcamp.svg';
 import Spin from '../assets/images/Spin.svg';
@@ -14,6 +14,7 @@ export type MonthWithDay = Workout & {
   cal_date: number;
   img_url: string;
 };
+
 interface MonthInfo {
   name: string;
   days: number;
